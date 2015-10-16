@@ -1,0 +1,22 @@
+group 'org.apache.geode.example'
+version '1.0-SNAPSHOT'
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        maven {
+            url "https://repository.apache.org/content/repositories/snapshots/"
+        }
+        maven { url "http://repo.spring.io/libs-snapshot" }
+        maven { url "http://repo.spring.io/milestone" }
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: "$junitVersion"
+        compile("org.apache.geode:gemfire-core:$geodeVersion")
+    }
+}
