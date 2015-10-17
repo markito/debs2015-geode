@@ -811,3 +811,11 @@
    cluster[cluster]
 
 [info 2015/10/16 09:46:33.099 PDT locator1 <locator request thread[1]> tid=0x2a] Building up configuration response with following configurations
+
+[info 2015/10/16 18:14:01.965 PDT locator1 <RMI TCP Connection(3)-192.168.1.94> tid=0x76] (tid=118 msgId=0) Executing list members
+
+[info 2015/10/16 18:14:17.943 PDT locator1 <RMI TCP Connection(3)-192.168.1.94> tid=0x76] (tid=118 msgId=1) Executing create region --name=taxiTripRegion --type=REPLICATE
+
+[info 2015/10/16 18:14:19.872 PDT locator1 <RMI TCP Connection(3)-192.168.1.94> tid=0x76] Configuration change successful
+
+[info 2015/10/16 18:30:26.970 PDT locator1 <RMI TCP Connection(3)-192.168.1.94> tid=0x76] (tid=118 msgId=2) Executing describe region --name=/taxiTripRegion
