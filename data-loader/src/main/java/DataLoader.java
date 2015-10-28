@@ -15,6 +15,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author wmarkito
@@ -22,8 +25,16 @@ import java.util.Map;
  */
 public class DataLoader {
 
+
+  private static final Logger logger = Logger.getLogger(DataLoader.class.getName());
+
   final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   private String fileLocation;
+
+  public int getBatchSize() {
+    return batchSize;
+  }
+
   private final int batchSize = 10;
   private Map<String, TaxiTrip> batchMap  = new HashMap<>();
 
@@ -42,30 +53,50 @@ public class DataLoader {
 
   public void load() {
     try {
-      Files.lines(Paths.get(fileLocation)).forEach((line) -> process(line.split(",")));
+      Files.lines(Paths.get(fileLocation)).forEach((line) -> process(line.split(",")) );
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
+  public long getBatchCount() {
+    return batchCount;
+  }
+
+  long batchCount=0;
+  long errorCount=0;
   /**
    *
    * @param line
    */
   public void process(final String[] line) {
+
     try {
       TaxiTrip trip = parseLine(line);
-      batchMap.put(trip.getMedallion(), trip);
+      batchMap.put(trip.getMedallion() + trip.getPickup_datetime(), trip);
 
-      if (queueSize() % batchSize == 0)  {
-        taxiTripRegion.putAll(batchMap);
-        batchMap.clear();
-      }
+    } catch (ParseException | NumberFormatException e) {
 
-    } catch (ParseException e) {
-      e.printStackTrace();
+      errorCount++;
+      final String message = e.getMessage() + "\n Line:" + line + " - Error #:" + errorCount;
+      logger.log(Level.SEVERE, message);
+
     }
+
+    if (queueSize() % batchSize == 0) {
+      processBatch();
+
+    }
+
   }
+
+  private void processBatch() {
+    batchCount++;
+    taxiTripRegion.putAll(batchMap);
+    logger.info("Batch processed. #" + batchCount);
+    batchMap.clear();
+  }
+
   /**
    * Connect to a Geode locator and sets serialization to model package
    * @return ClientCache
@@ -88,7 +119,8 @@ public class DataLoader {
    */
   public TaxiTrip parseLine(final String[] line) throws ParseException {
 
-    TaxiTrip trip = new TaxiTrip();
+    try {
+      TaxiTrip trip = new TaxiTrip();
       trip.setMedallion(line[0]);
       trip.setHack_license(line[1]);
       trip.setPickup_datetime(dateFormat.parse(line[2]));
@@ -107,7 +139,33 @@ public class DataLoader {
       trip.setTolls_amount(BigDecimal.valueOf(Double.valueOf(line[15])));
       trip.setTotal_amount(BigDecimal.valueOf(Double.valueOf(line[16])));
 
-    return trip;
+      return trip;
+
+    } catch (NumberFormatException ex) {
+      // TODO: -1
+      throw new ParseException(ex.getMessage(), -1);
+    }
   }
 
+  public static void main(String[] args) {
+    long start= System.nanoTime();
+
+    DataLoader loader = new DataLoader( "/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file100.csv" );
+    loader.load();
+
+    // last batch
+    if (loader.queueSize() > 0) loader.processBatch();
+
+    logger.info("Total error count:" + loader.getErrorCount());
+
+    long end = System.nanoTime();
+    long timeSpent = end-start;
+
+    logger.info("Total time: " + TimeUnit.NANOSECONDS.toMillis(timeSpent) );
+    logger.info("Total entries: " + loader.getBatchCount() * loader.getBatchSize() );
+  }
+
+  public long getErrorCount() {
+    return errorCount;
+  }
 }
