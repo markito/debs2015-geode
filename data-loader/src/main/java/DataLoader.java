@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,27 +26,40 @@ import java.util.logging.Logger;
  */
 public class DataLoader {
 
-
   private static final Logger logger = Logger.getLogger(DataLoader.class.getName());
 
   final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  private final int batchSize = Integer.getInteger("batchSize", 200);
+  private final String LOCATOR_HOST = System.getProperty("locatorHost", "localhost");
+  private final int LOCATOR_PORT = Integer.getInteger("locatorPort", 10334);
+  private final String TAXI_TRIP_REGION = "TaxiTrip";
+
   private String fileLocation;
-
-  public int getBatchSize() {
-    return batchSize;
-  }
-
-  private final int batchSize = 10;
+  private LongAdder batchCount;
+  private LongAdder errorCount;
   private Map<String, TaxiTrip> batchMap  = new HashMap<>();
-
   private ClientCache clientCache;
   private Region<String, TaxiTrip> taxiTripRegion;
 
+  public DataLoader(final String fileLocation, boolean connect) {
+    this(fileLocation);
+    if (connect) {
+      this.clientCache = this.connect();
+      this.taxiTripRegion = createTaxiTripRegion();
+    }
+  }
+
+  public Region<String, TaxiTrip> createTaxiTripRegion() {
+    taxiTripRegion = clientCache.<String,TaxiTrip>createClientRegionFactory(ClientRegionShortcut.PROXY).create(TAXI_TRIP_REGION);
+    return taxiTripRegion;
+  }
+
   public DataLoader(final String fileLocation) {
     this.fileLocation = fileLocation;
-    this.clientCache = connect();
-    this.taxiTripRegion = clientCache.<String,TaxiTrip>createClientRegionFactory(ClientRegionShortcut.PROXY).create("taxiTripRegion");
+    batchCount = new LongAdder();
+    errorCount = new LongAdder();
   }
+
 
   public long queueSize() {
     return batchMap.size();
@@ -53,18 +67,21 @@ public class DataLoader {
 
   public void load() {
     try {
-      Files.lines(Paths.get(fileLocation)).forEach((line) -> process(line.split(",")) );
+      if (Files.exists(Paths.get(fileLocation))) {
+        logger.info("Loading file...");
+        Files.lines(Paths.get(fileLocation)).forEach((line) -> process(line.split(",")));
+      } else {
+        throw new IOException(String.format("File not found: %s", fileLocation));
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
   public long getBatchCount() {
-    return batchCount;
+    return batchCount.longValue();
   }
 
-  long batchCount=0;
-  long errorCount=0;
   /**
    *
    * @param line
@@ -77,8 +94,8 @@ public class DataLoader {
 
     } catch (ParseException | NumberFormatException e) {
 
-      errorCount++;
-      final String message = e.getMessage() + "\n Line:" + line + " - Error #:" + errorCount;
+      errorCount.increment();
+      final String message = String.format("%s\n Line:%s - Error #:%d", e.getMessage(), line, getErrorCount());
       logger.log(Level.SEVERE, message);
 
     }
@@ -87,13 +104,17 @@ public class DataLoader {
       processBatch();
 
     }
-
   }
 
+  private LongAdder counter = new LongAdder();
+
   private void processBatch() {
-    batchCount++;
+    batchCount.increment();
+
     taxiTripRegion.putAll(batchMap);
-    logger.info("Batch processed. #" + batchCount);
+
+    logger.fine(String.format("Batch processed. #%d", getBatchCount()));
+    counter.add(batchMap.size());
     batchMap.clear();
   }
 
@@ -102,13 +123,16 @@ public class DataLoader {
    * @return ClientCache
    */
   public ClientCache connect() {
+    if (clientCache != null) {
+      return clientCache;
+    } else {
+      this.clientCache = new ClientCacheFactory()
+              .addPoolLocator(LOCATOR_HOST, LOCATOR_PORT)
+              .setPdxSerializer(new ReflectionBasedAutoSerializer("org.apache.geode.example.debs.model.*"))
+              .setPdxPersistent(true).create();
 
-    ClientCacheFactory factory = new ClientCacheFactory()
-            .addPoolLocator("localhost", 10334)
-            .setPdxSerializer(new ReflectionBasedAutoSerializer("org.apache.geode.example.debs.model.*"))
-            .setPdxPersistent(true);
-
-    return factory.create();
+      return clientCache;
+    }
   }
 
   /**
@@ -147,25 +171,32 @@ public class DataLoader {
     }
   }
 
-  public static void main(String[] args) {
-    long start= System.nanoTime();
+  public int getBatchSize() {
+    return batchSize;
+  }
+  public long getErrorCount() {
+    return errorCount.longValue();
+  }
 
-    DataLoader loader = new DataLoader( "/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file100.csv" );
+
+  public static void main(String[] args) {
+
+    DataLoader loader = new DataLoader("/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file1.csv", true);
+
+    long start= System.nanoTime();
     loader.load();
 
     // last batch
     if (loader.queueSize() > 0) loader.processBatch();
 
-    logger.info("Total error count:" + loader.getErrorCount());
-
     long end = System.nanoTime();
     long timeSpent = end-start;
 
-    logger.info("Total time: " + TimeUnit.NANOSECONDS.toMillis(timeSpent) );
-    logger.info("Total entries: " + loader.getBatchCount() * loader.getBatchSize() );
+    logger.info(String.format("[Errors: %d] - [Total time: %s ms]"
+            ,loader.getErrorCount()
+            ,TimeUnit.NANOSECONDS.toMillis(timeSpent))
+    );
+
   }
 
-  public long getErrorCount() {
-    return errorCount;
-  }
 }
