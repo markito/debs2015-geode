@@ -1767,3 +1767,17 @@ Caused by: java.lang.ClassNotFoundException: com.gemstone.gemfire.internal.cache
 [info 2015/11/04 09:32:30.772 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=4) Executing describe region --name=/TaxiTrip
 
 [info 2015/11/04 10:16:13.498 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=5) Executing describe region --name=/TaxiTrip
+
+[info 2015/11/04 10:22:37.096 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=6) Executing describe region --name=/TaxiTrip
+
+[info 2015/11/04 10:22:54.976 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=7) Executing describe region --name=/TaxiTrip
+
+[info 2015/11/04 10:22:55.670 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=8) Executing describe region --name=/TaxiTrip
+
+[info 2015/11/04 10:22:56.017 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=9) Executing describe region --name=/TaxiTrip
+
+[info 2015/11/04 10:22:56.249 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=10) Executing describe region --name=/TaxiTrip
+
+[info 2015/11/04 10:22:56.449 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=11) Executing describe region --name=/TaxiTrip
+
+[info 2015/11/04 10:22:56.622 PST locator1 <RMI TCP Connection(5)-192.168.1.94> tid=0xb2] (tid=178 msgId=12) Executing describe region --name=/TaxiTrip
