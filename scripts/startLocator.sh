@@ -1,3 +1,5 @@
 #!/bin/bash
+. ./setEnv.sh
 
-gfsh start locator --name=locator1 --bind-address=localhost
+mkdir -p locator1
+gfsh start locator --name=locator1 
