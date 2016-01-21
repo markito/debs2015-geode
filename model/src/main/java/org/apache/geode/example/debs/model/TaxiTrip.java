@@ -46,6 +46,8 @@ public class TaxiTrip {
   private BigDecimal tip_amount;
   private BigDecimal tolls_amount;
   private BigDecimal total_amount;
+  private Cell pickup_cell;
+  private Cell dropoff_cell;
 
   public TaxiTrip() {}
 
@@ -226,5 +228,21 @@ public class TaxiTrip {
 
   public void setTotal_amount(BigDecimal total_amount) {
     this.total_amount = total_amount;
+  }
+
+  public Cell getPickup_cell() {
+    return pickup_cell;
+  }
+
+  public void setPickup_cell(Cell pickup_cell) {
+    this.pickup_cell = pickup_cell;
+  }
+
+  public Cell getDropoff_cell() {
+    return dropoff_cell;
+  }
+
+  public void setDropoff_cell(Cell dropoff_cell) {
+    this.dropoff_cell = dropoff_cell;
   }
 }
