@@ -24,7 +24,7 @@ public class LatLongToCellConverterTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void outsideLatThrowsException() throws Exception {
-    double lat = GIVEN_LAT - LAT_DELTA;
+    double lat = GIVEN_LAT + LAT_DELTA;
     LatLongToCellConverter converter = new LatLongToCellConverter();
     converter.getCell(lat, GIVEN_LONG);
   }
