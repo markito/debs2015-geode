@@ -4,9 +4,8 @@ import com.gemstone.gemfire.cache.client.ClientCache;
 import com.gemstone.gemfire.cache.client.ClientCacheFactory;
 import com.gemstone.gemfire.cache.query.SelectResults;
 
-import org.junit.After;
+import org.apache.geode.example.debs.config.Config;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 

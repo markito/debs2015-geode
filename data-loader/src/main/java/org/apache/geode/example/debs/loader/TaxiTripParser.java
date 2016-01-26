@@ -1,5 +1,6 @@
 package org.apache.geode.example.debs.loader;
 
+import org.apache.geode.example.debs.config.Config;
 import org.apache.geode.example.debs.model.TaxiTrip;
 
 import java.math.BigDecimal;

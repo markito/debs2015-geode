@@ -6,6 +6,7 @@ import com.gemstone.gemfire.cache.client.ClientCacheFactory;
 import com.gemstone.gemfire.cache.client.ClientRegionShortcut;
 import com.gemstone.gemfire.pdx.ReflectionBasedAutoSerializer;
 
+import org.apache.geode.example.debs.config.Config;
 import org.apache.geode.example.debs.model.TaxiTrip;
 
 import java.io.IOException;
