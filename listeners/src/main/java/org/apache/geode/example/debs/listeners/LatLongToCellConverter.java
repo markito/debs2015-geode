@@ -1,6 +1,8 @@
 package org.apache.geode.example.debs.listeners;
 
 import org.apache.geode.example.debs.model.Cell;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by sbawaskar on 11/29/15.
@@ -14,7 +16,11 @@ public class LatLongToCellConverter {
   private final double ENDING_LATITUDE = START_LATITUDE - (latDelta * 300);
   private final double ENDING_LONGITUDE = START_LONGITUDE + (longDelta * 300);
 
+  private static final Logger logger = LogManager.getLogger();
+
   public Cell getCell(double latitude, double longitude) {
+    logger.info(String.format("### Lat: %s, Long %s", latitude, longitude));
+
     //add 1 since the co-ordinate system starts at 1,1 not 0,0
     verifyCellLocation(latitude, longitude);
     int x = (int) ((START_LATITUDE - latitude) / latDelta) + 1;

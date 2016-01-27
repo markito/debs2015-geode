@@ -40,6 +40,10 @@ public class CellWriter implements CacheWriter<String, PdxInstance>, Declarable 
 
   @Override
   public void beforeCreate(EntryEvent<String, PdxInstance> event) throws CacheWriterException {
+    calculateCells(event);
+  }
+
+  public void calculateCells(EntryEvent<String, PdxInstance> event) {
     PdxInstance pdxInstance = event.getNewValue();
     WritablePdxInstance writablePdxInstance = pdxInstance.createWriter();
     Cell pickupCell;
@@ -49,6 +53,9 @@ public class CellWriter implements CacheWriter<String, PdxInstance>, Declarable 
 
       pickupCell = this.latLongToCellConverter.getCell((double) pdxInstance.getField("pickup_latitude"), (double) pdxInstance.getField("pickup_longitude"));
       dropoffCell = this.latLongToCellConverter.getCell((double) pdxInstance.getField("dropoff_latitude"), (double) pdxInstance.getField("dropoff_longitude"));
+
+      logger.info("Pickup:"+ pickupCell);
+      logger.info("Dropoff:" + dropoffCell);
 
 //      PdxInstanceFactory pdxInstanceFactory = PdxInstanceFactoryImpl.newCreator("org.apache.geode.example.debs.model.Cell", false);
 //      PdxInstance pdxCellInstance = pdxInstanceFactory.create();
@@ -65,7 +72,6 @@ public class CellWriter implements CacheWriter<String, PdxInstance>, Declarable 
       logger.info(String.format("Exception: %s", e.getMessage()));
 //      throw e;
     }
-
   }
 
 
@@ -81,7 +87,7 @@ public class CellWriter implements CacheWriter<String, PdxInstance>, Declarable 
 
   @Override
   public void beforeUpdate(EntryEvent<String, PdxInstance> event) throws CacheWriterException {
-
+    calculateCells(event);
   }
 
   @Override

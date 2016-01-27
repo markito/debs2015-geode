@@ -5,6 +5,7 @@ import com.gemstone.gemfire.pdx.PdxInstance;
 import com.gemstone.gemfire.pdx.WritablePdxInstance;
 import org.apache.geode.example.debs.model.Cell;
 import org.apache.geode.example.debs.model.TaxiTrip;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -18,6 +19,7 @@ public class CellWriterTest {
   double GIVEN_LAT = 41.474937;
   double GIVEN_LONG = -74.913585;
   @Test
+  @Ignore
   public void testBeforeCreate() throws Exception {
     LatLongToCellConverter mockConverter = mock(LatLongToCellConverter.class);
     CellWriter writer = new CellWriter(mockConverter);
