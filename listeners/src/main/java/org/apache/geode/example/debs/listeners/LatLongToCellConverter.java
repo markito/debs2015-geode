@@ -28,10 +28,10 @@ public class LatLongToCellConverter {
    */
   private void verifyCellLocation(double latitude, double longitude) {
     if (latitude > START_LATITUDE || latitude < ENDING_LATITUDE) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException(String.format("Latitude %s is out of range", latitude));
     }
     if (longitude < START_LONGITUDE || longitude > ENDING_LONGITUDE) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException(String.format("Longitude %s is out of range", longitude));
     }
   }
 }
