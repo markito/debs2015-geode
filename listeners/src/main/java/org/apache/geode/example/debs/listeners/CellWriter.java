@@ -4,6 +4,8 @@ import com.gemstone.gemfire.cache.CacheWriter;
 import com.gemstone.gemfire.cache.CacheWriterException;
 import com.gemstone.gemfire.cache.EntryEvent;
 import com.gemstone.gemfire.cache.RegionEvent;
+import com.gemstone.gemfire.pdx.PdxInstance;
+import com.gemstone.gemfire.pdx.WritablePdxInstance;
 import org.apache.geode.example.debs.model.Cell;
 import org.apache.geode.example.debs.model.TaxiTrip;
 
@@ -12,7 +14,7 @@ import java.util.logging.Logger;
 /**
  * Created by sbawaskar on 1/20/16.
  */
-public class CellWriter implements CacheWriter<String, TaxiTrip> {
+public class CellWriter implements CacheWriter<String, PdxInstance> {
 
   private static final Logger logger = Logger.getLogger(CellWriter.class.getName());
 
@@ -27,38 +29,44 @@ public class CellWriter implements CacheWriter<String, TaxiTrip> {
   }
 
   @Override
-  public void beforeUpdate(EntryEvent<String, TaxiTrip> event) throws CacheWriterException {
+  public void beforeUpdate(EntryEvent<String, PdxInstance> event) throws CacheWriterException {
 
   }
 
   @Override
-  public void beforeCreate(EntryEvent<String, TaxiTrip> event) throws CacheWriterException {
-    TaxiTrip trip = event.getNewValue();
+  public void beforeCreate(EntryEvent<String, PdxInstance> event) throws CacheWriterException {
+    PdxInstance trip = event.getNewValue();
     Cell pickupCell;
     Cell dropoffCell;
     try {
-      pickupCell = this.latLongToCellConverter.getCell(trip.getPickup_latitude(), trip.getPickup_longitude());
-      dropoffCell = this.latLongToCellConverter.getCell(trip.getDropoff_latitude(), trip.getDropoff_longitude());
+      double pickupLatitude = (double) trip.getField("pickup_latitude");
+      double pickupLongitude = (double) trip.getField("pickup_longitude");
+      double dropoffLatitude = (double) trip.getField("dropoff_latitude");
+      double dropoffLongitude = (double) trip.getField("dropoff_longitude");
+      pickupCell = this.latLongToCellConverter.getCell(pickupLatitude, pickupLongitude);
+      dropoffCell = this.latLongToCellConverter.getCell(dropoffLatitude, dropoffLongitude);
     } catch (IllegalArgumentException e) {
       logger.info("Trip "+event.getKey()+" outside study zone");
       throw e;
     }
-    trip.setPickup_cell(pickupCell);
-    trip.setDropoff_cell(dropoffCell);
-  }
-
-  @Override
-  public void beforeDestroy(EntryEvent<String, TaxiTrip> event) throws CacheWriterException {
+    WritablePdxInstance writablePdxInstance = trip.createWriter();
+    writablePdxInstance.setField("pickup_cell", pickupCell);
+    writablePdxInstance.setField("dropoff_cell", dropoffCell);
 
   }
 
   @Override
-  public void beforeRegionDestroy(RegionEvent<String, TaxiTrip> event) throws CacheWriterException {
+  public void beforeDestroy(EntryEvent<String, PdxInstance> event) throws CacheWriterException {
 
   }
 
   @Override
-  public void beforeRegionClear(RegionEvent<String, TaxiTrip> event) throws CacheWriterException {
+  public void beforeRegionDestroy(RegionEvent<String, PdxInstance> event) throws CacheWriterException {
+
+  }
+
+  @Override
+  public void beforeRegionClear(RegionEvent<String, PdxInstance> event) throws CacheWriterException {
 
   }
 
