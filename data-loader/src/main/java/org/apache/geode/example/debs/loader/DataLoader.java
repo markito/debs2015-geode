@@ -4,6 +4,12 @@ import com.gemstone.gemfire.cache.Region;
 import com.gemstone.gemfire.cache.client.ClientCache;
 import com.gemstone.gemfire.cache.client.ClientCacheFactory;
 import com.gemstone.gemfire.cache.client.ClientRegionShortcut;
+import com.gemstone.gemfire.cache.query.FunctionDomainException;
+import com.gemstone.gemfire.cache.query.NameResolutionException;
+import com.gemstone.gemfire.cache.query.Query;
+import com.gemstone.gemfire.cache.query.QueryInvocationTargetException;
+import com.gemstone.gemfire.cache.query.QueryService;
+import com.gemstone.gemfire.cache.query.TypeMismatchException;
 import com.gemstone.gemfire.pdx.ReflectionBasedAutoSerializer;
 
 import org.apache.geode.example.debs.config.Config;
@@ -120,8 +126,11 @@ public class DataLoader {
 
     this.clientCache = new ClientCacheFactory()
             .addPoolLocator(Config.LOCATOR_HOST, Config.LOCATOR_PORT)
-            .setPdxSerializer(new ReflectionBasedAutoSerializer("org.apache.geode.example.debs.model.*"))
-            .setPdxPersistent(true).create();
+            .setPdxSerializer(new ReflectionBasedAutoSerializer("org.apache.geode.example.debs.*"))
+            .setPdxReadSerialized(true)
+            .setPdxPersistent(true)
+            .create();
+
     return clientCache;
   }
 
@@ -131,6 +140,27 @@ public class DataLoader {
 
 //    long start= System.nanoTime();
     loader.load();
+
+    ClientCache clientCache = loader.connect();
+
+    QueryService queryService = clientCache.getQueryService();
+
+    Query newQuery = queryService.newQuery("select t.pickup_cell, t.dropoff_cell from /TaxiTrip t");
+
+    try {
+      System.out.println(newQuery.execute());
+
+    } catch (FunctionDomainException e) {
+      e.printStackTrace();
+    } catch (TypeMismatchException e) {
+      e.printStackTrace();
+    } catch (NameResolutionException e) {
+      e.printStackTrace();
+    } catch (QueryInvocationTargetException e) {
+      e.printStackTrace();
+    }
+//
+
 ////
 //    long end = System.nanoTime();
 //    long timeSpent = end-start;
