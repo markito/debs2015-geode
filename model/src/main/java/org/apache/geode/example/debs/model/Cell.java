@@ -1,11 +1,16 @@
 package org.apache.geode.example.debs.model;
 
+import com.gemstone.gemfire.DataSerializable;
+import com.gemstone.gemfire.pdx.PdxReader;
+import com.gemstone.gemfire.pdx.PdxSerializable;
+import com.gemstone.gemfire.pdx.PdxWriter;
+
 /**
  * Created by sbawaskar on 11/29/15.
  */
-public class Cell {
-  private final int x;
-  private final int y;
+public class Cell implements PdxSerializable {
+  private int x;
+  private int y;
 
   public Cell(int x, int y) {
     this.x = x;
@@ -43,4 +48,15 @@ public class Cell {
     return y;
   }
 
+  @Override
+  public void toData(PdxWriter writer) {
+    writer.writeInt("x", x);
+    writer.writeInt("y", y);
+  }
+
+  @Override
+  public void fromData(PdxReader reader) {
+    x = reader.readInt("x");
+    y = reader.readInt("y");
+  }
 }
