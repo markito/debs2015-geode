@@ -9,7 +9,7 @@ gfsh	-e "connect" -e "start server --name=server1 --max-heap=4G"
 # deploy listener jar
 . ./deployJar.sh
 
-# create async event-queue
+# create async event-queue and regions
 gfsh	-e "connect" \
 	-e "create async-event-queue --id=frequentRouteQueue --batch-time-interval=5 --listener=org.apache.geode.example.debs.listeners.FrequentRouterListener"\
 	-e "create async-event-queue --id=cellGridQueue --batch-time-interval=5 --listener=org.apache.geode.example.debs.listeners.CellGridListener"\
