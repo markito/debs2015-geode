@@ -1,5 +1,6 @@
 #!/bin/bash
+. ./setEnv.sh
 
-gfsh stop locator --dir=locator1
 gfsh stop server --dir=server1
+gfsh stop locator --dir=locator1
 
