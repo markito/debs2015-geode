@@ -19,7 +19,7 @@ public class LatLongToCellConverter {
   private static final Logger logger = LogManager.getLogger();
 
   public Cell getCell(double latitude, double longitude) {
-    logger.info(String.format("### Lat: %s, Long %s", latitude, longitude));
+    logger.debug(String.format("### Lat: %s, Long %s", latitude, longitude));
 
     //add 1 since the co-ordinate system starts at 1,1 not 0,0
     verifyCellLocation(latitude, longitude);

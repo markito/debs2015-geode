@@ -4,15 +4,10 @@ import com.gemstone.gemfire.cache.CacheWriter;
 import com.gemstone.gemfire.cache.CacheWriterException;
 import com.gemstone.gemfire.cache.Declarable;
 import com.gemstone.gemfire.cache.EntryEvent;
-import com.gemstone.gemfire.cache.Region;
 import com.gemstone.gemfire.cache.RegionEvent;
 import com.gemstone.gemfire.internal.cache.EntryEventImpl;
 import com.gemstone.gemfire.pdx.PdxInstance;
-import com.gemstone.gemfire.pdx.PdxInstanceFactory;
 import com.gemstone.gemfire.pdx.WritablePdxInstance;
-import com.gemstone.gemfire.pdx.internal.PdxInstanceFactoryImpl;
-import com.gemstone.gemfire.pdx.internal.json.PdxInstanceHelper;
-
 
 import org.apache.geode.example.debs.model.Cell;
 import org.apache.logging.log4j.LogManager;
@@ -53,12 +48,6 @@ public class CellWriter implements CacheWriter<String, PdxInstance>, Declarable 
 
       pickupCell = this.latLongToCellConverter.getCell((double) pdxInstance.getField("pickup_latitude"), (double) pdxInstance.getField("pickup_longitude"));
       dropoffCell = this.latLongToCellConverter.getCell((double) pdxInstance.getField("dropoff_latitude"), (double) pdxInstance.getField("dropoff_longitude"));
-
-      logger.info("Pickup:"+ pickupCell);
-      logger.info("Dropoff:" + dropoffCell);
-
-//      PdxInstanceFactory pdxInstanceFactory = PdxInstanceFactoryImpl.newCreator("org.apache.geode.example.debs.model.Cell", false);
-//      PdxInstance pdxCellInstance = pdxInstanceFactory.create();
 
       writablePdxInstance.setField("pickup_cell", pickupCell);
       writablePdxInstance.setField("dropoff_cell", dropoffCell);

@@ -4,9 +4,11 @@ import com.gemstone.gemfire.cache.Declarable;
 import com.gemstone.gemfire.cache.asyncqueue.AsyncEvent;
 import com.gemstone.gemfire.cache.asyncqueue.AsyncEventListener;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * create async-event-queue --id=frequentRouterQueue --listener=org.apache.geode.example.debs.listeners.FrequentRouterListener
@@ -15,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class FrequentRouterListener implements AsyncEventListener, Declarable {
 
-  Logger logger = Logger.getLogger("org.apache.geode.example.debs.listeners.FrequentRouterListener");
+  private static final Logger logger = LogManager.getLogger("org.apache.geode.example.debs.listeners.FrequentRouterListener");
 
   @Override
   public boolean processEvents(List<AsyncEvent> list) {
