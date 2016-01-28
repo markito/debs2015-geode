@@ -1,4 +1,4 @@
-package org.apache.geode.example.debs.listeners;
+package org.apache.geode.example.debs.loader;
 
 import org.apache.geode.example.debs.model.Cell;
 import org.apache.geode.example.debs.model.TaxiTrip;

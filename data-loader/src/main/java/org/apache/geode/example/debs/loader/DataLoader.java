@@ -34,6 +34,7 @@ public class DataLoader {
 
   private static final Logger logger = Logger.getLogger(DataLoader.class.getName());
   private final TaxiTripParser taxiTripParser = new TaxiTripParser();
+  private LatLongToCellConverter latLongToCellConverter = new LatLongToCellConverter();
   private final String fileLocation;
   private Stats stats;
   private Map<String, TaxiTrip> batchMap = new HashMap<>();
@@ -89,6 +90,8 @@ public class DataLoader {
 
     try {
       TaxiTrip trip = taxiTripParser.parseLine(line.split(","));
+      trip.setPickup_cell(latLongToCellConverter.getCell(trip.getPickup_latitude(), trip.getPickup_longitude()));
+      trip.setDropoff_cell(latLongToCellConverter.getCell(trip.getDropoff_latitude(), trip.getDropoff_longitude()));
       batchMap.put(trip.getMedallion() + trip.getPickup_datetime(), trip);
 
     } catch (ParseException | NumberFormatException e) {
