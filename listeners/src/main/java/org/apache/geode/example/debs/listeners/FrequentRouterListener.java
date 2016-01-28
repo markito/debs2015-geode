@@ -26,7 +26,7 @@ public class FrequentRouterListener implements AsyncEventListener, Declarable {
 
   private static final Logger logger = LogManager.getLogger("org.apache.geode.example.debs.listeners.FrequentRouterListener");
 
-  private static final String ROUTES_REGION = "Routes";
+  private static final String ROUTES_REGION = "FrequentRoute";
 
   private Region<Route, RouteLog> routesRegion;
 

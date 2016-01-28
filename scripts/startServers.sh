@@ -15,4 +15,3 @@ gfsh	-e "connect" \
 	-e "create region --name=TaxiTrip --type=PARTITION --cache-writer=org.apache.geode.example.debs.listeners.CellWriter --async-event-queue-id=frequentRouteQueue"\
 	-e "create region --name=FrequentRoute --type=REPLICATE"\
 	-e "create region --name=ProfitableArea --type=REPLICATE"\
-	-e "create region --name=Routes --type=REPLICATE"\
