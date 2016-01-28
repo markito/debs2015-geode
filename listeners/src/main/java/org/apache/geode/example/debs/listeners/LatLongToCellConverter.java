@@ -24,7 +24,7 @@ public class LatLongToCellConverter {
     //add 1 since the co-ordinate system starts at 1,1 not 0,0
     verifyCellLocation(latitude, longitude);
     int x = (int) ((START_LATITUDE - latitude) / latDelta) + 1;
-    int y = (int) ((START_LONGITUDE - longitude) / longDelta) + 1;
+    int y = (int) (Math.abs(START_LONGITUDE - longitude) / longDelta) + 1;
 
     return new Cell(x, y);
   }

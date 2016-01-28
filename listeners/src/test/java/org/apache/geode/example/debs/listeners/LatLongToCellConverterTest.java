@@ -53,7 +53,7 @@ public class LatLongToCellConverterTest {
     Cell cell = converter.getCell(trip.getDropoff_latitude(), trip.getDropoff_longitude());
 
     assertEquals(cell.getX(), 168);
-    assertEquals(cell.getY(), -153);
+    assertEquals(cell.getY(), 155);
   }
 
   @Test
@@ -61,6 +61,13 @@ public class LatLongToCellConverterTest {
     Cell cell = converter.getCell(GIVEN_LAT, GIVEN_LONG);
     assertEquals(1, cell.getX());
     assertEquals(1, cell.getY());
+  }
+  @Test
+  public void givenLatLongReturnsCell10() {
+    System.out.println(+GIVEN_LONG+" "+(GIVEN_LONG+(LONG_DELTA*10)));
+    Cell cell = converter.getCell(GIVEN_LAT-(LAT_DELTA*10), GIVEN_LONG+(LONG_DELTA*10));
+    assertEquals(11, cell.getX());
+    assertEquals(11, cell.getY());
   }
 
   @Test(expected = IllegalArgumentException.class)
