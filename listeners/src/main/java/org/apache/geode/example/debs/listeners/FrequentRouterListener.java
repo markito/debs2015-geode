@@ -83,11 +83,12 @@ public class FrequentRouterListener implements AsyncEventListener, Declarable {
   }
 
   private void updateRouteLog(Route route, RouteLog routeLog, Date pickupDatetime, Date dropoffDatetime) {
-    RouteLog newRouteLog = new RouteLog(routeLog.getNumTrips() + 1, pickupDatetime, dropoffDatetime);
     while (true) {
+      RouteLog newRouteLog = new RouteLog(routeLog.getNumTrips() + 1, pickupDatetime, dropoffDatetime);
       if (getFrequentRouteRegion().replace(route, routeLog, newRouteLog)) {
         break;
       }
+      routeLog = getFrequentRouteRegion().get(route);
     }
   }
 
