@@ -30,4 +30,30 @@ public class Route implements PdxSerializable {
     this.pickup_cell = (Cell) reader.readObject("pickup_cell");
     this.dropoff_cell = (Cell) reader.readObject("dropoff_cell");
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Route) {
+      Route other = (Route) obj;
+      if (this.pickup_cell.equals(other.pickup_cell) &&
+          this.dropoff_cell.equals(other.dropoff_cell)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.pickup_cell.hashCode() + this.dropoff_cell.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    StringBuffer sb = new StringBuffer("Route@");
+    sb.append(System.identityHashCode(this));
+    sb.append(" pickupCell ").append(pickup_cell.toString());
+    sb.append(" dropoffCell ").append(dropoff_cell.toString());
+    return sb.toString();
+  }
 }
