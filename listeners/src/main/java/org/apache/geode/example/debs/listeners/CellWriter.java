@@ -46,8 +46,12 @@ public class CellWriter implements CacheWriter<String, PdxInstance>, Declarable 
 
     try {
 
-      pickupCell = this.latLongToCellConverter.getCell((double) pdxInstance.getField("pickup_latitude"), (double) pdxInstance.getField("pickup_longitude"));
-      dropoffCell = this.latLongToCellConverter.getCell((double) pdxInstance.getField("dropoff_latitude"), (double) pdxInstance.getField("dropoff_longitude"));
+      double pickupLatitude = (double) pdxInstance.getField("pickup_latitude");
+      double pickupLongitude = (double) pdxInstance.getField("pickup_longitude");
+      double dropoffLatitude = (double) pdxInstance.getField("dropoff_latitude");
+      double dropoffLongitude = (double) pdxInstance.getField("dropoff_longitude");
+      pickupCell = this.latLongToCellConverter.getCell(pickupLatitude, pickupLongitude);
+      dropoffCell = this.latLongToCellConverter.getCell(dropoffLatitude, dropoffLongitude);
 
       writablePdxInstance.setField("pickup_cell", pickupCell);
       writablePdxInstance.setField("dropoff_cell", dropoffCell);
