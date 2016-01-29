@@ -7,6 +7,8 @@ import com.gemstone.gemfire.cache.asyncqueue.AsyncEvent;
 import com.gemstone.gemfire.cache.asyncqueue.AsyncEventListener;
 
 import com.gemstone.gemfire.pdx.PdxInstance;
+
+import org.apache.geode.example.debs.config.Config;
 import org.apache.geode.example.debs.model.Cell;
 import org.apache.geode.example.debs.model.Route;
 import org.apache.geode.example.debs.model.RouteLog;
@@ -24,14 +26,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class FrequentRouterListener implements AsyncEventListener, Declarable {
 
-  private static final Logger logger = LogManager.getLogger("org.apache.geode.example.debs.listeners.FrequentRouterListener");
-
-  private static final String ROUTES_REGION = "FrequentRoute";
+  private static final Logger logger = LogManager.getLogger(FrequentRouterListener.class.getName());
 
   private Region<Route, RouteLog> routesRegion;
 
   public FrequentRouterListener() {
-    this(CacheFactory.getAnyInstance().getRegion(ROUTES_REGION));
+    this(CacheFactory.getAnyInstance().getRegion(Config.FREQUENT_ROUTES_REGION));
   }
 
   public FrequentRouterListener(Region routesRegion) {
@@ -40,7 +40,7 @@ public class FrequentRouterListener implements AsyncEventListener, Declarable {
 
   private Region<Route, RouteLog> getFrequentRouteRegion() {
     if (this.routesRegion == null) {
-      this.routesRegion = CacheFactory.getAnyInstance().getRegion(ROUTES_REGION);
+      this.routesRegion = CacheFactory.getAnyInstance().getRegion(Config.FREQUENT_ROUTES_REGION);
     }
     return this.routesRegion;
   }

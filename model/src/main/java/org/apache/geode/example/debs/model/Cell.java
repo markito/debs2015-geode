@@ -8,7 +8,7 @@ import com.gemstone.gemfire.pdx.PdxWriter;
 /**
  * Created by sbawaskar on 11/29/15.
  */
-public class Cell implements PdxSerializable {
+public class Cell implements PdxSerializable, Comparable<Cell> {
   private int x;
   private int y;
 
@@ -59,4 +59,13 @@ public class Cell implements PdxSerializable {
     x = reader.readInt("x");
     y = reader.readInt("y");
   }
+
+  @Override
+  public int compareTo(Cell o) {
+    int x_compare = Integer.compare(this.getX(), o.getX());
+    if (x_compare != 0) return x_compare;
+
+    return Integer.compare(this.getY(), o.getY());
+  }
+
 }

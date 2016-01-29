@@ -4,8 +4,10 @@ import com.gemstone.gemfire.cache.Declarable;
 import com.gemstone.gemfire.cache.EntryOperation;
 import com.gemstone.gemfire.cache.PartitionResolver;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * Partition resolver to use pickup cell as the hash key.
@@ -13,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class TaxiTripPartitionResolver implements PartitionResolver, Declarable {
 
-  private static final Logger logger = Logger.getLogger(TaxiTripPartitionResolver.class.getName());
+  private static final Logger logger = LogManager.getLogger(TaxiTripPartitionResolver.class.getName());
 
   @Override
   public Object getRoutingObject(EntryOperation opDetails) {
