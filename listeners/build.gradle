@@ -1,4 +1,4 @@
 dependencies {
     compile project(':model')
-    compile project(':data-loader')
+    compile project(':config')
 }

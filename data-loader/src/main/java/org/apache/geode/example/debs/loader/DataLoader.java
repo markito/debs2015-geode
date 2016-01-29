@@ -140,7 +140,7 @@ public class DataLoader {
 
   public static void main(String[] args) throws IOException {
 
-    DataLoader loader = new DataLoader("/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file100.csv");
+    DataLoader loader = new DataLoader("/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file10k.csv");
 
 //    long start= System.nanoTime();
     loader.load();

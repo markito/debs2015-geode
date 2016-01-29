@@ -1,5 +1,6 @@
 dependencies {
     compile project(':model')
+    compile project(':config')
     compile project(':listeners')
 }
 
