@@ -1,5 +1,6 @@
 dependencies {
     compile project(':model')
+    compile project(':listeners')
 }
 
 test.onlyIf { Boolean.getBoolean('run.tests') }
