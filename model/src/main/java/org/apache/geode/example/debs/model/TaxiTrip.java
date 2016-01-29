@@ -94,6 +94,10 @@ public class TaxiTrip {
             '}';
   }
 
+  public BigDecimal getFarePlusTip() {
+    return fare_amount.add(tip_amount);
+  }
+
   public String getMedallion() {
     return medallion;
   }
@@ -114,12 +118,18 @@ public class TaxiTrip {
     return pickup_datetime;
   }
 
+  public long getPickup_time() { return pickup_datetime.getTime(); }
+
   public void setPickup_datetime(Date pickup_datetime) {
     this.pickup_datetime = pickup_datetime;
   }
 
   public Date getDropoff_datetime() {
     return dropoff_datetime;
+  }
+
+  public long getDropoff_time() {
+    return dropoff_datetime.getTime();
   }
 
   public void setDropoff_datetime(Date dropoff_datetime) {

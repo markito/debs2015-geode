@@ -1,4 +1,4 @@
-package org.apache.geode.example.debs.config;
+package org.apache.geode.example  .debs.config;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
