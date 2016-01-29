@@ -14,6 +14,7 @@ import com.gemstone.gemfire.pdx.ReflectionBasedAutoSerializer;
 
 import org.apache.geode.example.debs.config.Config;
 import org.apache.geode.example.debs.model.TaxiTrip;
+import org.apache.geode.example.debs.model.TripId;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,9 +38,9 @@ public class DataLoader {
   private LatLongToCellConverter latLongToCellConverter = new LatLongToCellConverter();
   private final String fileLocation;
   private Stats stats;
-  private Map<String, TaxiTrip> batchMap = new HashMap<>();
+  private Map<TripId, TaxiTrip> batchMap = new HashMap<>();
   private ClientCache clientCache;
-  private Region<String, TaxiTrip> taxiTripRegion;
+  private Region<TripId, TaxiTrip> taxiTripRegion;
 
 
   public DataLoader(final String fileLocation) {
@@ -52,8 +53,8 @@ public class DataLoader {
     this.clientCache = clientCache;
   }
 
-  public Region<String, TaxiTrip> createTaxiTripRegion() {
-    return clientCache.<String, TaxiTrip>createClientRegionFactory(ClientRegionShortcut.PROXY).create(Config.TAXI_TRIP_REGION);
+  public Region<TripId, TaxiTrip> createTaxiTripRegion() {
+    return clientCache.<TripId, TaxiTrip>createClientRegionFactory(ClientRegionShortcut.PROXY).create(Config.TAXI_TRIP_REGION);
   }
 
   public void initialize() {
@@ -92,9 +93,9 @@ public class DataLoader {
       TaxiTrip trip = taxiTripParser.parseLine(line.split(","));
       trip.setPickup_cell(latLongToCellConverter.getCell(trip.getPickup_latitude(), trip.getPickup_longitude()));
       trip.setDropoff_cell(latLongToCellConverter.getCell(trip.getDropoff_latitude(), trip.getDropoff_longitude()));
-      batchMap.put(trip.getMedallion() + trip.getPickup_datetime(), trip);
+      batchMap.put(new TripId(trip.getMedallion(), trip.getPickup_datetime(), trip.getPickup_cell()), trip);
 
-    } catch (ParseException | NumberFormatException e) {
+    } catch (ParseException | IllegalArgumentException e) {
       getStats().incrementError();
       logger.log(Level.SEVERE,
               String.format("%s\n Line:%s - Error #:%d",

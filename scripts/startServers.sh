@@ -9,9 +9,7 @@ gfsh	-e "connect" -e "start server --name=server1 --max-heap=4G"
 # deploy listener jar
 . ./deployJar.sh
 
-# create async event-queue and regions
-gfsh	-e "connect" \
-	-e "create async-event-queue --id=frequentRouteQueue --batch-size=50 --batch-time-interval=10 --listener=org.apache.geode.example.debs.listeners.FrequentRouterListener"\
-	-e "create region --name=TaxiTrip --type=PARTITION --async-event-queue-id=frequentRouteQueue"\
-	-e "create region --name=FrequentRoute --type=REPLICATE"\
-	-e "create region --name=ProfitableArea --type=REPLICATE"\
+gfsh stop server --dir=server1
+
+gfsh	-e "connect" -e "start server --name=server1 --max-heap=4G --cache-xml-file=cache.xml"
+
