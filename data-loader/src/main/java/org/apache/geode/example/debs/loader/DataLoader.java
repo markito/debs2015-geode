@@ -98,7 +98,7 @@ public class DataLoader {
     } catch (ParseException | IllegalArgumentException e) {
       getStats().incrementError();
       logger.log(Level.SEVERE,
-              String.format("%s\n Line:%s - Error #:%d",
+              String.format("%s\n Line:%s - Error #%d",
                       e.getMessage(),
                       line,
                       getStats().getErrorCount()));
@@ -140,7 +140,7 @@ public class DataLoader {
 
   public static void main(String[] args) throws IOException {
 
-    DataLoader loader = new DataLoader("/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file10k.csv");
+    DataLoader loader = new DataLoader("/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file100.csv");
 
 //    long start= System.nanoTime();
     loader.load();
@@ -149,20 +149,22 @@ public class DataLoader {
 
     QueryService queryService = clientCache.getQueryService();
 
-    Query newQuery = queryService.newQuery("select t.pickup_cell, t.dropoff_cell from /TaxiTrip t");
+    Query newQuery = queryService.newQuery("select avg(t.fare_amount), t.pickup_cell.toString() from /TaxiTrip t group by t.pickup_cell.toString()");
+    
 
-    try {
-      System.out.println(newQuery.execute());
 
-    } catch (FunctionDomainException e) {
-      e.printStackTrace();
-    } catch (TypeMismatchException e) {
-      e.printStackTrace();
-    } catch (NameResolutionException e) {
-      e.printStackTrace();
-    } catch (QueryInvocationTargetException e) {
-      e.printStackTrace();
-    }
+//    try {
+//      System.out.println(newQuery.execute());
+//
+//    } catch (FunctionDomainException e) {
+//      e.printStackTrace();
+//    } catch (TypeMismatchException e) {
+//      e.printStackTrace();
+//    } catch (NameResolutionException e) {
+//      e.printStackTrace();
+//    } catch (QueryInvocationTargetException e) {
+//      e.printStackTrace();
+//    }
 //
 
 ////
