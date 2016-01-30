@@ -19,7 +19,7 @@ public class TaxiTripPartitionResolver implements PartitionResolver, Declarable 
 
   @Override
   public Object getRoutingObject(EntryOperation opDetails) {
-    logger.debug("PARTITION RESOLVER:" + opDetails.getKey() + " op:" + opDetails);
+    logger.info("PARTITION RESOLVER:" + opDetails.getKey() + " op:" + opDetails);
     return opDetails.getKey();
   }
 

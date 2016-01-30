@@ -1,6 +1,8 @@
 group 'org.apache.geode.example'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'idea'
+
 subprojects {
     apply plugin: 'java'
 
@@ -11,6 +13,7 @@ subprojects {
     sourceCompatibility = 1.8
 
     repositories {
+        mavenLocal()
         maven {
             url "https://repository.apache.org/content/repositories/snapshots/"
         }
@@ -25,6 +28,7 @@ subprojects {
         testCompile group: 'junit', name: 'junit', version: "$junitVersion"
         testCompile "org.mockito:mockito-core:1.+"
         compile("org.apache.geode:gemfire-core:$geodeVersion")
+        compile("org.apache.geode:gemfire-cq:$geodeVersion")
         compile("commons-configuration:commons-configuration:$configVersion")
         compile("org.yaml:snakeyaml:$snakeyamlVersion")
     }
