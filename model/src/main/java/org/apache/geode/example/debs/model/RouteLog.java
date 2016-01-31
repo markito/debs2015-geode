@@ -24,6 +24,16 @@ public class RouteLog implements PdxSerializable {
   }
 
   @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("[");
+    sb.append("numTrips: ").append(numTrips);
+    sb.append(" latestPickupDatetime:").append(latestPickupDatetime);
+    sb.append(" latestDropoffDatetime:").append(latestDropoffDatetime);
+    sb.append("]");
+    return sb.toString();
+  }
+
+  @Override
   public void toData(PdxWriter writer) {
     writer.writeInt("numTrips", getNumTrips());
     writer.writeDate("latestPickupDatetime", getLatestPickupDatetime());

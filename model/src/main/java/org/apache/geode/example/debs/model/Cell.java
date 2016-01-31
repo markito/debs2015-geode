@@ -24,10 +24,11 @@ public class Cell implements PdxSerializable, Comparable<Cell> {
 
   @Override
   public String toString() {
-    StringBuffer sb = new StringBuffer("Cell@");
-    sb.append(System.identityHashCode(this));
+    StringBuffer sb = new StringBuffer("Cell[");
+    //sb.append(System.identityHashCode(this));
     sb.append(" x:").append(this.x);
     sb.append(" y:").append(this.y);
+    sb.append("]");
     return sb.toString();
   }
 

@@ -50,10 +50,11 @@ public class Route implements PdxSerializable {
 
   @Override
   public String toString() {
-    StringBuffer sb = new StringBuffer("Route@");
-    sb.append(System.identityHashCode(this));
-    sb.append(" pickupCell ").append(pickup_cell.toString());
-    sb.append(" dropoffCell ").append(dropoff_cell.toString());
+    StringBuffer sb = new StringBuffer("{Route");
+    //sb.append(System.identityHashCode(this));
+    sb.append(" pickup ").append(pickup_cell.toString());
+    sb.append(" dropoff ").append(dropoff_cell.toString());
+    sb.append("}");
     return sb.toString();
   }
 }
