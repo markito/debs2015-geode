@@ -10,6 +10,8 @@ gfsh	-e "connect" -e "start server --name=server1 --max-heap=4G"
 . ./deployJar.sh
 
 gfsh stop server --dir=server1
+gfsh stop server --dir=server2
 
-gfsh	-e "connect" -e "start server --name=server1 --max-heap=4G --cache-xml-file=cache.xml"
+gfsh	-e "connect" -e "start server --server-port=0 --name=server1 --max-heap=2G --cache-xml-file=cache.xml"
+gfsh	-e "connect" -e "start server --server-port=0 --name=server2 --max-heap=2G --cache-xml-file=cache.xml"
 
