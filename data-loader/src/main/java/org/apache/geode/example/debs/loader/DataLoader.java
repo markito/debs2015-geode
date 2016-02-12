@@ -114,6 +114,12 @@ public class DataLoader {
       taxiTripRegion.putAll(batchMap);
       logger.fine(String.format("Batch processed. #%d", getStats().getBatchCount()));
 
+      logger.info(String.format("Pausing for %d milliseconds", Config.PAUSE_MILLIS_BETWEEN_BATCH_INSERT));
+      try {
+        Thread.sleep(Config.PAUSE_MILLIS_BETWEEN_BATCH_INSERT);
+      } catch (InterruptedException e) {
+        logger.info("Caught "+e);
+      }
       getStats().incrementCounter(batchMap.size());
       batchMap.clear();
     }
@@ -140,7 +146,8 @@ public class DataLoader {
 
   public static void main(String[] args) throws IOException {
 
-    DataLoader loader = new DataLoader("/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file100.csv");
+    DataLoader loader = new DataLoader("/Users/wmarkito/Pivotal/ASF/samples/debs2015-geode/data/debs2015-file10k.csv");
+    //DataLoader loader = new DataLoader("/Users/sbawaskar/github/debs2015-geode/data/debs2015-file100.csv");
 
 //    long start= System.nanoTime();
     loader.load();

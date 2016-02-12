@@ -16,4 +16,6 @@ public class Config {
 
   public static final String TAXI_TRIP_REGION = "TaxiTrip";
   public static final String FREQUENT_ROUTES_REGION = "FrequentRoute";
+
+  public static final int PAUSE_MILLIS_BETWEEN_BATCH_INSERT = 500;
 }
