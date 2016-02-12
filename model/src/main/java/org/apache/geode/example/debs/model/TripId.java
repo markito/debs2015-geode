@@ -18,18 +18,18 @@ public class TripId implements PdxSerializable {
   }
 
   public TripId(String medallion, Date pickupDatetime, Cell pickupCell) {
-    this.medallion = medallion;
-    this.pickupDatetime = pickupDatetime;
-    this.pickupCell = pickupCell;
+    this.setMedallion(medallion);
+    this.setPickupDatetime(pickupDatetime);
+    this.setPickupCell(pickupCell);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("TripId@");
     sb.append(System.identityHashCode(this));
-    sb.append(" medallion ").append(medallion);
-    sb.append(" pickupDatetime ").append(pickupDatetime);
-    sb.append(" pickupCell ").append(pickupCell);
+    sb.append(" medallion ").append(getMedallion());
+    sb.append(" pickupDatetime ").append(getPickupDatetime());
+    sb.append(" pickupCell ").append(getPickupCell());
     return sb.toString();
   }
 
@@ -37,9 +37,9 @@ public class TripId implements PdxSerializable {
   public boolean equals(Object obj) {
     if (obj instanceof TripId) {
       TripId other = (TripId) obj;
-      if (this.medallion.equals(other.medallion) &&
-          this.pickupDatetime.equals(other.pickupDatetime) &&
-          this.pickupCell.equals(other.pickupCell)) {
+      if (this.getMedallion().equals(other.getMedallion()) &&
+          this.getPickupDatetime().equals(other.getPickupDatetime()) &&
+          this.getPickupCell().equals(other.getPickupCell())) {
         return true;
       }
     }
@@ -48,20 +48,44 @@ public class TripId implements PdxSerializable {
 
   @Override
   public int hashCode() {
-    return medallion.hashCode() + pickupDatetime.hashCode() + pickupCell.hashCode();
+    return getMedallion().hashCode() + getPickupDatetime().hashCode() + getPickupCell().hashCode();
   }
 
   @Override
   public void toData(PdxWriter writer) {
-    writer.writeString("medallion", medallion);
-    writer.writeDate("pickupDatetime", pickupDatetime);
-    writer.writeObject("pickupCell", pickupCell);
+    writer.writeString("medallion", getMedallion());
+    writer.writeDate("pickupDatetime", getPickupDatetime());
+    writer.writeObject("pickupCell", getPickupCell());
   }
 
   @Override
   public void fromData(PdxReader reader) {
-    this.medallion = reader.readString("medallion");
-    this.pickupDatetime = reader.readDate("pickupDatetime");
-    this.pickupCell = (Cell) reader.readObject("pickupCell");
+    this.setMedallion(reader.readString("medallion"));
+    this.setPickupDatetime(reader.readDate("pickupDatetime"));
+    this.setPickupCell((Cell) reader.readObject("pickupCell"));
+  }
+
+  public String getMedallion() {
+    return medallion;
+  }
+
+  public void setMedallion(String medallion) {
+    this.medallion = medallion;
+  }
+
+  public Date getPickupDatetime() {
+    return pickupDatetime;
+  }
+
+  public void setPickupDatetime(Date pickupDatetime) {
+    this.pickupDatetime = pickupDatetime;
+  }
+
+  public Cell getPickupCell() {
+    return pickupCell;
+  }
+
+  public void setPickupCell(Cell pickupCell) {
+    this.pickupCell = pickupCell;
   }
 }

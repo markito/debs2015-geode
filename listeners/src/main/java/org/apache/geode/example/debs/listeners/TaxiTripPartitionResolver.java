@@ -3,7 +3,8 @@ package org.apache.geode.example.debs.listeners;
 import com.gemstone.gemfire.cache.Declarable;
 import com.gemstone.gemfire.cache.EntryOperation;
 import com.gemstone.gemfire.cache.PartitionResolver;
-
+import com.gemstone.gemfire.pdx.PdxInstance;
+import org.apache.geode.example.debs.model.TripId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,8 +20,15 @@ public class TaxiTripPartitionResolver implements PartitionResolver, Declarable 
 
   @Override
   public Object getRoutingObject(EntryOperation opDetails) {
-    logger.info("PARTITION RESOLVER:" + opDetails.getKey() + " op:" + opDetails);
-    return opDetails.getKey();
+    Object key = opDetails.getKey();
+    if (key instanceof TripId) {
+      TripId tripId = (TripId) key;
+      return tripId.getPickupCell().hashCode();
+    } else if (key instanceof PdxInstance) {
+      PdxInstance tripId = (PdxInstance) key;
+      return tripId.getField("pickupCell").hashCode();
+    }
+    return key;
   }
 
   @Override
