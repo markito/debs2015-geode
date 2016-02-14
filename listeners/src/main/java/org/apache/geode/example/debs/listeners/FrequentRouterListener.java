@@ -13,7 +13,6 @@ import org.apache.geode.example.debs.model.Cell;
 import org.apache.geode.example.debs.model.Route;
 import org.apache.geode.example.debs.model.RouteLog;
 import org.apache.geode.example.debs.model.TaxiLog;
-import org.apache.hadoop.hbase.thrift.generated.IllegalArgument;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
@@ -31,36 +30,24 @@ import org.apache.logging.log4j.Logger;
  */
 public class FrequentRouterListener implements AsyncEventListener, Declarable {
 
-  public static final int TIME_WINDOW = (30 * 60 * 1000);  // 30 minutes
-
   private static final Logger logger = LogManager.getLogger(FrequentRouterListener.class.getName());
 
   private Region<Route, RouteLog> routesRegion;
-
-  private Region<Cell, List<TaxiLog>> taxiRegion;
+  private Region<Cell, List<TaxiLog>> emptyTaxiRegion;
 
   public FrequentRouterListener() {
     this(CacheFactory.getAnyInstance().getRegion(Config.FREQUENT_ROUTES_REGION));
+    this.emptyTaxiRegion = CacheFactory.getAnyInstance().getRegion(Config.EMPTY_TAXI_REGION);
   }
 
   public FrequentRouterListener(Region routesRegion) {
     this.routesRegion = routesRegion;
   }
 
-  private Region<Route, RouteLog> getFrequentRouteRegion() {
-    if (this.routesRegion == null) {
-      this.routesRegion = CacheFactory.getAnyInstance().getRegion(Config.FREQUENT_ROUTES_REGION);
-    }
-    return this.routesRegion;
-  }
-
   @Override
   public boolean processEvents(List<AsyncEvent> list) {
 
-    this.taxiRegion = CacheFactory.getAnyInstance().getRegion("Taxi");
-
     for (AsyncEvent ev : list) {
-      logger.debug("Processing "+ev);
       PdxInstance taxiTrip = (PdxInstance) ev.getDeserializedValue();
 
       Cell pickupCell;
@@ -77,7 +64,7 @@ public class FrequentRouterListener implements AsyncEventListener, Declarable {
         updateTaxiLog(taxiTrip, dropoffCell, pickupDatetime, dropoffDatetime);
 
       } catch (RuntimeException e) {
-        logger.info("Caught Exception "+e);
+        logger.info("Caught Exception: "+ e + " Message: " + e.getMessage());
         continue;
       }
 
@@ -97,14 +84,14 @@ public class FrequentRouterListener implements AsyncEventListener, Declarable {
 
   public void updateTaxiLog(PdxInstance taxiTrip, Cell dropoffCell, Date pickupDatetime, Date dropoffDatetime) {
     String medallion = (String) taxiTrip.getField("medallion");
-    List<TaxiLog> taxiLogList = taxiRegion.get(dropoffCell);
+    List<TaxiLog> taxiLogList = getEmptyTaxiRegion().get(dropoffCell);
     TaxiLog taxiLog = new TaxiLog(dropoffDatetime.getTime(), medallion);
 
     if (taxiLogList == null) {
       taxiLogList = new ArrayList<>();
       taxiLogList.add(taxiLog);
 
-      taxiRegion.put(dropoffCell, taxiLogList);
+      getEmptyTaxiRegion().put(dropoffCell, taxiLogList);
     } else {
       int index = taxiLogList.indexOf(taxiLog);
 
@@ -112,20 +99,36 @@ public class FrequentRouterListener implements AsyncEventListener, Declarable {
         taxiLogList.add(taxiLog);
       } else {
         TaxiLog oldTaxiLog = taxiLogList.get(index);
-        long lastMinute = TimeUnit.MINUTES.toMinutes(oldTaxiLog.getLastTrip_time());
-        long currentMinute = TimeUnit.MINUTES.toMinutes(pickupDatetime.getTime());
 
-        if ((currentMinute - lastMinute) >  TIME_WINDOW ) {
+        long lastMinute = TimeUnit.SECONDS.toSeconds(oldTaxiLog.getLastTrip_time());
+        long currentMinute = TimeUnit.SECONDS.toSeconds(pickupDatetime.getTime());
+
+        if ((currentMinute - lastMinute) >  TimeUnit.SECONDS.toSeconds(Config.TIME_WINDOW)) {
           taxiLogList.add(taxiLog);
         } else {
           taxiLogList.remove(index);
-          logger.debug(dropoffCell + " seems profitable...");
+          logger.info(dropoffCell + " seems profitable...");
         }
       }
 
       // TODO: while true...
-      taxiRegion.replace(dropoffCell, taxiLogList);
+      getEmptyTaxiRegion().replace(dropoffCell, taxiLogList);
     }
+  }
+
+  private Region<Cell, List<TaxiLog>> getEmptyTaxiRegion() {
+    if (this.emptyTaxiRegion == null) {
+      this.emptyTaxiRegion = CacheFactory.getAnyInstance().getRegion(Config.EMPTY_TAXI_REGION);
+    }
+    return this.emptyTaxiRegion;
+  }
+
+
+  private Region<Route, RouteLog> getFrequentRouteRegion() {
+    if (this.routesRegion == null) {
+      this.routesRegion = CacheFactory.getAnyInstance().getRegion(Config.FREQUENT_ROUTES_REGION);
+    }
+    return this.routesRegion;
   }
 
   private Cell getCellFromPdx(PdxInstance pdxCell) {
