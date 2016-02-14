@@ -4,7 +4,7 @@
 ################################################################
 . ./setEnv.sh
 
-gfsh	-e "connect" -e "start server --name=server1 --max-heap=4G"
+gfsh	-e "connect" -e "start server --name=server1 --max-heap=1G"
 
 # deploy listener jar
 . ./deployJar.sh
